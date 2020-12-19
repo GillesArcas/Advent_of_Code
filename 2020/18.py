@@ -9,9 +9,7 @@ def read_expr(string):
     string = string.replace('(', '[')
     string = string.replace(')', '],')
     string = '[' + string + ']'
-    # print(string)
     expr = ast.literal_eval(string)
-    # print(expr)
     return expr
 
 
