@@ -61,13 +61,6 @@ def tile_borders(raw_tile):
     return [raw_tile[0], ''.join(raw_tile_t[9]), raw_tile[9], ''.join(raw_tile_t[0])]
 
 
-def match_sud(tiles, tileid, tile):
-    for tileid2, tile2 in tiles.items():
-        if tileid2 != tileid:
-            if tile[9] == tile2[0]:
-                print(tileid, tileid2)
-
-
 def backtrack(border_tiles, id_tiles):
     """
     border_tiles: dict id:liste_des_bords
@@ -200,7 +193,6 @@ def reduce_tile(tile):
 
 def restore_picture(raw_tiles, id_tiles, array):
     reduce_tiles = {idtile:reduce_tile(tile) for idtile, tile in raw_tiles.items()}
-    ##reduce_tiles = raw_tiles
     print(reduce_tiles)
     print()
     print(array)
@@ -217,11 +209,8 @@ def restore_picture(raw_tiles, id_tiles, array):
     print()
     with open('20-picture.txt', 'wt') as f:
         for line in parray:
-            #print(line)
             for lines in zip(*line):
-                #print(lines)
                 print(''.join(lines), file=f)
-            #print()
 
 
 def apply_trans_tile(tile, trans):
@@ -286,74 +275,19 @@ PAT3 = '.#..#..#..#..#..#...'
 
 
 def cherche_serpent(picture):
-    found = False
-    nfound = 0
-    printed = False
-    for index, line in enumerate(picture[1:-1], 1):
-        for m in re.finditer(PAT2, line):
-            if re.match(PAT1, picture[index - 1][m.start():]) and re.match(PAT3, picture[index + 1][m.start():]):
-                print('FOUND')
-                if not printed:
-                    for line in picture:
-                        print(line)
-                    print()
-                printed = True
-                found = True
-                nfound += 1
-                line1 = (picture[index - 1][:m.start()]
-                        + replace_sharp(picture[index - 1][m.start():m.end()], PAT1)
-                        + picture[index - 1][m.end():])
-                line2 = (picture[index - 0][:m.start()]
-                        + replace_sharp(picture[index - 0][m.start():m.end()], PAT2)
-                        + picture[index - 0][m.end():])
-                line3 = (picture[index + 1][:m.start()]
-                        + replace_sharp(picture[index + 1][m.start():m.end()], PAT3)
-                        + picture[index + 1][m.end():])
-                picture[index - 1] = line1
-                picture[index - 0] = line2
-                picture[index + 1] = line3
-    if found:
-        print('Found:', nfound)
-        for line in picture:
-            print(line)
-        print('\n>', sum(sum(c == '#' for c in line) for line in picture))
-
-
-def cherche_serpent(picture):
-    nfound = 0
-    for index, line in enumerate(picture[1:-1], 1):
-        for m in re.finditer(PAT2, line):
-            print('FOUND pRESQUE')
-            if re.match(PAT1, picture[index - 1][m.start():]) and re.match(PAT3, picture[index + 1][m.start():]):
-                nfound += 1
-                print('FOUND')
-    if nfound:
-        print('Found:', nfound)
-        ntot = sum(sum(c == '#' for c in line) for line in picture)
-        print('>', ntot - nfound * 15)
-
-
-def cherche_serpent(picture):
-    nfound = 0
-    for index, line in enumerate(picture[:-1]):
-        for m in re.finditer(PAT1, line):
-            print('FOUND presque')
-            if re.match(PAT2, picture[index + 1][m.start():]) and re.match(PAT3, picture[index + 2][m.start():]):
-                nfound += 1
-                print('FOUND')
-    if nfound:
-        print('Found:', nfound)
-        ntot = sum(sum(c == '#' for c in line) for line in picture)
-        print('>', ntot - nfound * 15)
-
-
-def cherche_serpent(picture):
+    listpicture = [list(line) for line in picture]
     nfound = 0
     for i in range(len(picture) - 4):
         for j in range(len(picture[0]) - len(PAT1) - 1):
             if check_serpent_ij(picture, i, j):
                 nfound += 1
-                print('FOUND')
+                PAT = (PAT1, PAT2, PAT3)
+                for i2 in range(3):
+                    for j2 in range(len(PAT1)):
+                        if PAT[i2][j2] == '#':
+                            listpicture[i + i2][j + j2] = 'O'
+    for line in listpicture:
+        print(''.join(line))
     if nfound:
         print('Found:', nfound)
         ntot = sum(sum(c == '#' for c in line) for line in picture)
@@ -379,6 +313,4 @@ def replace_sharp(string, pat):
 
 colorama.init()
 #code1()
-# 2499 too high
-# 2439 too high
 code2()
