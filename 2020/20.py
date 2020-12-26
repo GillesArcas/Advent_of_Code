@@ -1,6 +1,5 @@
 import re
-import colorama
-from colorama import Fore, Back, Style
+
 
 EXEMPLE = 0
 if EXEMPLE == 0:
@@ -275,19 +274,11 @@ PAT3 = '.#..#..#..#..#..#...'
 
 
 def cherche_serpent(picture):
-    listpicture = [list(line) for line in picture]
     nfound = 0
     for i in range(len(picture) - 4):
         for j in range(len(picture[0]) - len(PAT1) - 1):
             if check_serpent_ij(picture, i, j):
                 nfound += 1
-                PAT = (PAT1, PAT2, PAT3)
-                for i2 in range(3):
-                    for j2 in range(len(PAT1)):
-                        if PAT[i2][j2] == '#':
-                            listpicture[i + i2][j + j2] = 'O'
-    for line in listpicture:
-        print(''.join(line))
     if nfound:
         print('Found:', nfound)
         ntot = sum(sum(c == '#' for c in line) for line in picture)
@@ -306,11 +297,5 @@ def check_serpent_ij(picture, i, j):
     return True
 
 
-def replace_sharp(string, pat):
-    return ''.join(cstr if cpat == '.' else ('O') for cstr, cpat in zip(string, pat))
-    return ''.join(cstr if cpat == '.' else (Fore.RED + 'O'+ Style.RESET_ALL) for cstr, cpat in zip(string, pat))
-
-
-colorama.init()
 #code1()
 code2()

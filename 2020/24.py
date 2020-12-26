@@ -1,6 +1,9 @@
 import re
 
 
+# use "cube coordinates" see https://www.redblobgames.com/grids/hexagons/
+
+
 EXEMPLE = 0
 if EXEMPLE == 0:
     DATA = '24.txt'
