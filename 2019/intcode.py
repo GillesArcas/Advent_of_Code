@@ -30,6 +30,7 @@ class Intcode:
         self.outvalues = list()
         self.returned_on = None  # 'output' or 'terminate'
         self.trace = False
+        self.verbose_output = True
 
     def run(self, initval, return_output=False):
         """
@@ -63,7 +64,8 @@ class Intcode:
             elif op == 4:  # output
                 x, = self.args(op)
                 outval = self.opval(mode, x, 0)
-                print('output', outval)
+                if self.verbose_output:
+                    print('output', outval)
                 self.outvalues.append(outval)
                 self.ptr += 2
                 if return_output:
@@ -125,7 +127,7 @@ class Intcode:
         elif op in (5, 6):
             return self.code[self.ptr + 1], self.code[self.ptr + 2]
         elif op in (3, 4, 9):
-            return (self.code[self.ptr + 1],)
+            return self.code[self.ptr + 1],
         elif op == 99:
             return []
         else:
