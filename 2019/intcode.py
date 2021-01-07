@@ -32,7 +32,7 @@ class Intcode:
         self.trace = False
         self.verbose_output = True
 
-    def run(self, initval, return_output=False):
+    def run(self, initval, input_callback=None, return_output=False):
         """
         initval: list of input values
         return_output: return on output if True
@@ -58,7 +58,10 @@ class Intcode:
 
             elif op == 3:  # input
                 dest, = self.args(op)
-                self.code[self.opdest(mode, dest, 0)] = self.invalues.pop(0)
+                if input_callback is None:
+                    self.code[self.opdest(mode, dest, 0)] = self.invalues.pop(0)
+                else:
+                    self.code[self.opdest(mode, dest, 0)] = input_callback()
                 self.ptr += 2
 
             elif op == 4:  # output
