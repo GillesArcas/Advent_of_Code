@@ -24,13 +24,21 @@ class Intcode:
         self.code = defaultdict(int)
         for i, x in enumerate(code):
             self.code[i] = x
+        self.code_init = self.code.copy()
         self.ptr = 0
         self.relbase = 0
         self.invalues = list()
         self.outvalues = list()
-        self.returned_on = None  # 'output' or 'terminate'
+        self.returned_on = None  # must be None or 'output' or 'terminate'
         self.trace = False
         self.verbose_output = True
+
+    def reset(self):
+        self.code = self.code_init.copy()
+        self.ptr = 0
+        self.relbase = 0
+        self.invalues = list()
+        self.outvalues = list()
 
     def run(self, initval, input_callback=None, return_output=False):
         """
