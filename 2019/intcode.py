@@ -40,7 +40,7 @@ class Intcode:
         self.invalues = list()
         self.outvalues = list()
 
-    def run(self, initval, input_callback=None, return_output=False):
+    def run(self, initval, input_callback=None, return_output=False, return_input=False):
         """
         initval: list of input values
         return_output: return on output if True
@@ -71,6 +71,9 @@ class Intcode:
                 else:
                     self.code[self.opdest(mode, dest, 0)] = input_callback()
                 self.ptr += 2
+                if return_input:
+                    self.returned_on = 'input'
+                    return None
 
             elif op == 4:  # output
                 x, = self.args(op)
@@ -142,7 +145,7 @@ class Intcode:
         elif op == 99:
             return []
         else:
-            assert False
+            assert False, op
 
     def opval(self, modes, val, rank):
         mode = (modes // (10 ** rank)) % 10
@@ -165,6 +168,9 @@ class Intcode:
             assert False
 
     def tracestr(self):
+        """
+        trace ptr, relbase, instruction, arguments
+        """
         instr = self.code[self.ptr]
         op = instr % 100
         return ' '.join(['%04d' % _ for _ in [self.ptr, self.relbase, instr, *self.args(op)]])
