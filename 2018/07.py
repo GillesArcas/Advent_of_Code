@@ -35,7 +35,35 @@ def code1():
 
 
 def code2():
-    print('2>', 0)
+    succ, pred, roots = get_data()
+
+    done = list()
+    available = sorted(roots)
+    timing = 0
+    workers = [None] * 5
+
+    while available or any(task is not None for task in workers):
+        if available and any(task is None for task in workers):
+            worker = next(wkr for wkr, task in enumerate(workers) if task is None)
+            task = available.pop(0)
+            workers[worker] = (task, timing + 60 + ord(task) - ord('A') + 1)
+        else:
+            soonest = float('inf')
+            for worker, data in enumerate(workers):
+                if data is not None:
+                    task, end_task = data
+                    if end_task < soonest:
+                        soonest = end_task
+                        first_worker_free = worker
+                        task_done = task
+            timing = soonest
+            workers[first_worker_free] = None
+            done.append(task_done)
+            available += [node for node in succ[task_done] if all(_ in done for _ in pred[node])]
+            available = sorted(available)
+        # print(done, available, workers)
+
+    print('2>', timing) 
 
 
 code1()
