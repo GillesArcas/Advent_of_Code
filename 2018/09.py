@@ -19,35 +19,74 @@ def read_data(n):
     return int(players), int(last_marble), int(score)
 
 
-def insert_next(circle, current, marble):
-    #print('>', len(circle), current, marble)
-    if current + 2 == len(circle):
-        circle.append(marble)
-        current = len(circle) - 1
-    else:
-        current = (current + 2) % len(circle)
-        circle.insert(current, marble)
-    #print('<', len(circle), current, marble)
-    return current
+class Node:
+    """
+    Linked list
+    """
+    def __init__(self, value):
+        self.value = value
+        self.prev = None
+        self.next = None
+
+    def __str__(self):
+        return f'{self.value} <{self.prev.value} >{self.next.value}'
+
+    def link(self, next):
+        self.next = next
+        next.prev = self
+
+    def neighbour(self, offset):
+        target= self
+        if offset >= 0:
+            for _ in range(offset):
+                target = target.next
+        else:
+            for _ in range(abs(offset)):
+                target = target.prev
+        return target
+
+    def insert(self, offset, value):
+        """
+        Return inserted node
+        """
+        node = Node(value)
+        target = self.neighbour(offset)
+        target.prev.link(node)
+        node.link(target)
+        return node
+
+    def remove(self, offset):
+        """
+        Return remove node and node right to it
+        """
+        target = self.neighbour(offset)
+        target.prev.link(target.next)
+        return target, target.next
+
+    def printall(self):
+        values = [self.value]
+        nextnode = self.next
+        while nextnode.value != self.value:
+            values.append(nextnode.value)
+            nextnode = nextnode.next
+        return ' '.join([str(_) for _ in values])
 
 
 def play(players, last_marble):
     scores = [0] * players
     player = 0
-    circle = [0, 1]
-    current = 1
-    for marble in range(2, last_marble + 1):
-        if marble % 1000 == 0:
-            print(marble, last_marble)
+    current = Node(0)
+    start = current
+    current.link(current)
+
+    for marble in range(1, last_marble + 1):
         player = (player + 1) % players
         if marble % 23 == 0:
             scores[player] += marble
-            current = (current - 7) % len(circle)
-            scores[player] += circle.pop(current)
+            removed, current = current.remove(-7)
+            scores[player] += removed.value
         else:
-            current = insert_next(circle, current, marble)
-
-        # print('[%d]' % (player + 1,) , ' '.join('%2d' % _ for _ in circle), '-', scores[player])
+            current = current.insert(2, marble)
 
     return max(scores)
 
@@ -57,7 +96,7 @@ def code1():
         players, last_marble, expected_score = read_data(_)
         score = play(players, last_marble)
         if expected_score:
-            assert score == expected_score
+            assert score == expected_score, (score, expected_score)
         else:
             print('1>', score)
 
