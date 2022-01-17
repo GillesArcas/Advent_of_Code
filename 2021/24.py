@@ -242,6 +242,7 @@ def strzsol(zsol):
 def monad_invimage(rank, zfrom, zto):
     """
     Return all z from zfrom which image by rankmonad is in zto.
+    Not used.
     """
     wz = set()
     for w in range(1, 10):
@@ -250,9 +251,6 @@ def monad_invimage(rank, zfrom, zto):
             if zr in zto:
                 wz.add(z)
     return wz
-
-
-# -- OK
 
 
 def monad_image(rank, zfrom):
@@ -270,9 +268,10 @@ def monad_image(rank, zfrom):
 def image_z():
     """
     Compute all z reachable from {0} for each rank.
+    Note that imgz[13] is not necessary.
     """
     imgz = [None] * 14
-    for rank in range(14):
+    for rank in range(13):
         zfrom = {0} if (rank == 0) else imgz[rank - 1]
         wz = monad_image(rank, zfrom)
         imgz[rank] = wz
@@ -336,17 +335,17 @@ def generate_rnd(possible):
 
 
 # -- Main ---------------------------------------------------------------------
-
+# https://old.reddit.com/r/adventofcode/comments/rnejv5/2021_day_24_solutions/
 
 def code1(monad):
     imgz = image_z()
     wz = backward_wz(imgz)
     generate_all(wz)
 
-    with open('24z.dat', 'wb') as f:
-        pickle.dump(imgz, f)
-    with open('24wz.dat', 'wb') as f:
-        pickle.dump(wz, f)
+    # with open('24z.dat', 'wb') as f:
+        # pickle.dump(imgz, f)
+    # with open('24wz.dat', 'wb') as f:
+        # pickle.dump(wz, f)
 
     return None
 
