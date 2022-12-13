@@ -123,32 +123,6 @@ def dijkstra(graph, start, end=None):
 
     routes = []
     for node in graph[start]:
-        heapq.heappush(routes, (graph[start][node], node))
-
-    visited = set()
-    visited.add(start)
-
-    while routes:
-        dist, node = heapq.heappop(routes)
-        if node in visited:
-            continue
-
-        if node == end:
-            return dist
-
-        for node2 in graph[node]:
-            if node2 not in visited:
-                newdist = dist + graph[node][node2]
-                heapq.heappush(routes, (newdist, node2))
-
-        visited.add(node)
-
-
-def dijkstra(graph, start, end=None):
-    # https://github.com/vterron/dijkstra/blob/master/dijkstra.py
-
-    routes = []
-    for node in graph[start]:
         heapq.heappush(routes, (graph[start][node], [start, node]))
 
     visited = set()
