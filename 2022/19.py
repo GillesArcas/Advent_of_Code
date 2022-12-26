@@ -4,15 +4,11 @@
 
 
 import re
-import msvcrt
-import random
-from collections import Counter, defaultdict
-
-kbhit_trace = False
+from collections import defaultdict
 
 
 EXAMPLES1 = (
-    # ('19-exemple1.txt', 33),
+    ('19-exemple1.txt', 33),
 )
 
 EXAMPLES2 = (
@@ -54,7 +50,7 @@ def next_states(blueprint, robots, collected):
             may_build.append(kind)
 
     # update collected without building
-    newcollected = tuple([x + 1 * y for x, y in zip(collected, robots)])
+    newcollected = tuple([x + y for x, y in zip(collected, robots)])
 
     # new states with building one
     for robot in reversed(may_build):
@@ -63,17 +59,14 @@ def next_states(blueprint, robots, collected):
         newrobots = tuple(newrobots)
         newcollected2 = tuple([x - y for x, y in zip(newcollected, blueprint[robot])])
         states.add((newrobots, newcollected2))
-        # if robot == 3:
-            # break
+
+        if robot == 3:
+            # equivalent to filter_on_robot_created
+            return states
 
     # new states without building
     states.add((robots, newcollected))
-    # if 3 in may_build:
-        # pass
-    # else:
-        # states.add((robots, newcollected))
 
-    # print('-', len(states), states)
     return states
 
 
@@ -85,17 +78,14 @@ def filter_on_collected(states):
     newstates = set()
     for robots, set1 in sets.items():
         ordered_collected = list(sorted(set1))
-        # print(ordered_robots)
         newset = set()
         for index, collected in enumerate(ordered_collected):
             for collected2 in ordered_collected[index + 1:]:
                 if all(c1 <= c2 for c1, c2 in zip(collected, collected2)):
-                    # if random.random() > 0.9:
-                        break
+                    break
             else:
                 newstates.add((robots, collected))
                 newset.add(collected)
-        # print(newset)
 
     return newstates
 
@@ -108,7 +98,6 @@ def filter_on_robots(states):
     newstates = set()
     for collected, set1 in sets.items():
         ordered_robots = list(sorted(set1))
-        # print(ordered_robots)
         newset = set()
         for index, robots in enumerate(ordered_robots):
             for robots2 in ordered_robots[index + 1:]:
@@ -117,22 +106,70 @@ def filter_on_robots(states):
             else:
                 newstates.add((robots, collected))
                 newset.add(robots)
-        # print(newset)
 
     return newstates
 
 
-def filter_on_max(states):
+def filter_on_max(states, tolerance=0):
     maxi = 0
     for state in states:
-        robots, collected = state
+        _, collected = state
         maxi = max(maxi, collected[3])
 
     newstates = set()
     for state in states:
-        robots, collected = state
-        if collected[3] == maxi:
+        _, collected = state
+        if collected[3] >= maxi - tolerance:
             newstates.add(state)
+
+    return newstates
+
+
+def next_state(state, blueprint, robot):
+    """
+    Return state after buying robot
+    """
+    robots, collected = state
+    if robot is None:
+        newrobots = robots
+        newcollected = collected
+    else:
+        newrobots = list(robots)
+        newrobots[robot] += 1
+        newcollected = [x - y for x, y in zip(collected, blueprint[robot])]
+    newcollected = [x + y for x, y in zip(newcollected, robots)]
+    return (tuple(newrobots), tuple(newcollected))
+
+
+def prev_state(state, blueprint, robot):
+    """
+    Return state before buying robot
+    """
+    robots, collected = state
+    if robot is None:
+        newrobots = robots
+        newcollected = collected
+    else:
+        assert robots[robot]
+        newrobots = list(robots)
+        newrobots[robot] -= 1
+        newcollected = [x + y for x, y in zip(collected, blueprint[robot])]
+    newcollected = [x - y for x, y in zip(newcollected, newrobots)]
+    return (tuple(newrobots), tuple(newcollected))
+
+
+def filter_on_robot_created(states, prevstates, blueprint):
+    newstates = states.copy()
+    for state in states:
+        robots, _ = state
+        if robots[3]:
+            prev = prev_state(state, blueprint, 3)
+            if prev in prevstates:
+                for k in range(3):
+                    state2 = next_state(prev, blueprint, k)
+                    newstates.discard(state2)
+                state2 = next_state(prev, blueprint, None)
+                newstates.discard(state2)
 
     return newstates
 
@@ -145,6 +182,7 @@ def develop_blueprint(blueprint, time):
         for state in states:
             robots, collected = state
             newstates = newstates.union(next_states(blueprint, robots, collected))
+        prevstates = states
         states = newstates
 
         if 1:
@@ -153,8 +191,11 @@ def develop_blueprint(blueprint, time):
         if 1:
             states = filter_on_robots(states)
 
+        if 1:
+            states = filter_on_max(states, tolerance=2)
+
         if 0:
-            states = filter_on_max(states)
+            states = filter_on_robot_created(states, prevstates, blueprint)
 
         maxi = 0
         for state in states:
@@ -166,6 +207,7 @@ def develop_blueprint(blueprint, time):
 
 
 def code1(blueprints):
+    # 66 minutes
     r = 0
     for index, blueprint in enumerate(blueprints):
         n = develop_blueprint(blueprint, 24)
@@ -175,6 +217,7 @@ def code1(blueprints):
 
 
 def code2(blueprints):
+    # 10 minutes
     r = 1
     for _, blueprint in enumerate(blueprints[:3]):
         n = develop_blueprint(blueprint, 32)
@@ -189,8 +232,8 @@ def test(n, code, examples, myinput):
         result = code(data)
         assert expected is None or result == expected, (data, expected, result)
 
-    # print(f'{n}>', code(read_data(myinput)))
+    print(f'{n}>', code(read_data(myinput)))
 
 
-# test(1, code1, EXAMPLES1, INPUT)
+test(1, code1, EXAMPLES1, INPUT)
 test(2, code2, EXAMPLES2, INPUT)
