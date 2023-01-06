@@ -40,7 +40,7 @@ def code1(instructions):
             for x in range(x1, x2 + 1):
                 for y in range(y1, y2 + 1):
                     grid[y][x] = 0
-    return sum(sum(c for c in line) for line in grid)
+    return sum(sum(line) for line in grid)
 
 
 def code2(instructions):
@@ -58,7 +58,7 @@ def code2(instructions):
             for x in range(x1, x2 + 1):
                 for y in range(y1, y2 + 1):
                     grid[y][x] = max(0, grid[y][x] - 1)
-    return sum(sum(c for c in line) for line in grid)
+    return sum(sum(line) for line in grid)
 
 
 def test(n, code, examples, myinput):
