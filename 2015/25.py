@@ -1,9 +1,6 @@
 """
---- 2015 ---
+--- 2015 --- Day 25: Let It Snow ---
 """
-
-
-import re
 
 
 EXAMPLES1 = (
