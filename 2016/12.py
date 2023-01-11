@@ -29,15 +29,19 @@ def read_data(filename):
     return instructions
 
 
+def argvalue(registers, x):
+    if isinstance(x, int):
+        return x
+    else:
+        return registers[x]
+
+
 def run(instructions, registers):
     pointer = 0
     while pointer < len(instructions):
         op, *args = instructions[pointer]
         if op == 'cpy':
-            if isinstance(args[0], int):
-                registers[args[1]] = args[0]
-            else:
-                registers[args[1]] = registers[args[0]]
+            registers[args[1]] = argvalue(registers, args[0])
             pointer += 1
         elif op == 'inc':
             registers[args[0]] += 1
@@ -46,14 +50,11 @@ def run(instructions, registers):
             registers[args[0]] -= 1
             pointer += 1
         elif op == 'jnz':
-            if isinstance(args[0], int):
-                cond = args[0]
-            else:
-                cond = registers[args[0]]
+            cond = argvalue(registers, args[0])
             if cond == 0:
                 pointer += 1
             else:
-                pointer += args[1]
+                pointer += argvalue(registers, args[1])
     return registers['a']
 
 

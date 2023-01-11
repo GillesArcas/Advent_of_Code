@@ -1,7 +1,7 @@
 """
 --- 2022 --- Day 20: Grove Positioning System ---
 
-Keywords: linked list
+Keywords: linked list, circular list
 """
 
 
@@ -90,7 +90,6 @@ class Node:
             n += 1
             node = node.next
         return n
-
 
     def printall(self):
         values = [self.value]
