@@ -75,30 +75,26 @@ def print_grid(grid):
 
 def dijkstra(graph, start, end):
     routes = []
-    for node in graph[start]:
-        heapq.heappush(routes, (graph[start][node], [start, node]))
-
-    visited = set()
-    visited.add(start)
+    heapq.heappush(routes, (0, start))
+    came_from = dict()
+    came_from[start] = None
+    cost_so_far = dict()
+    cost_so_far[start] = 0
 
     while routes:
-        dist, path = heapq.heappop(routes)
-        node = path[-1]
-        if node in visited:
-            continue
+        dist, node = heapq.heappop(routes)
 
         if node == end:
-            return dist, path
+            return dist, node
 
         for node2 in graph[node]:
-            if node2 not in visited:
-                newdist = dist + graph[node][node2]
-                newpath = path + [node2]
-                heapq.heappush(routes, (newdist, newpath))
+            newdist = cost_so_far[node] + graph[node][node2]
+            if node2 not in cost_so_far or newdist < cost_so_far[node2]:
+                cost_so_far[node2] = newdist
+                came_from[node2] = node
+                heapq.heappush(routes, (newdist, node2))
 
-        visited.add(node)
-
-    return float('inf'), []
+    return float('inf'), None
 
 
 def neighbours(i, j, grid):
@@ -116,7 +112,7 @@ def travel(grid):
     while True:
         nextgrid = next_grid(grid)
         time += 1
-        print(time)
+        # print(time)
         if nextgrid[0][0] == '.':
             graph[start][(time, 0, 0)] = 1
 
@@ -131,7 +127,7 @@ def travel(grid):
         if grid[len(grid) - 1][len(grid[0]) - 1] == '.':
             graph[(time - 1, len(grid) - 1, len(grid[0]) - 1)][end] = 1
 
-        dist, path = dijkstra(graph, start, end)
+        dist, _ = dijkstra(graph, start, end)
         if dist < float('inf'):
             return time, nextgrid
 
@@ -147,7 +143,7 @@ def travel_back(grid):
     while True:
         nextgrid = next_grid(grid)
         time += 1
-        print(time)
+        # print(time)
         if nextgrid[len(grid) - 1][len(grid[0]) - 1] == '.':
             graph[start][(time, len(grid) - 1, len(grid[0]) - 1)] = 1
 
@@ -162,7 +158,7 @@ def travel_back(grid):
         if grid[0][0] == '.':
             graph[(time - 1, 0, 0)][end] = 1
 
-        dist, path = dijkstra(graph, start, end)
+        dist, _ = dijkstra(graph, start, end)
         if dist < float('inf'):
             return time, nextgrid
 
@@ -177,7 +173,6 @@ def code1(grid):
 
 
 def code2(grid):
-    # 40 minutes...
     time1, grid = travel(grid)
     time2, grid = travel_back(grid)
     time3, grid = travel(grid)
