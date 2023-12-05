@@ -135,6 +135,8 @@ def code2(data):
         for dest, source, range_ in map_:
             if start <= source < start + length:
                 minval = min(minval, follow_map(map_, source))
+            elif source < start and source + range_ - 1 < start + length:
+                minval = min(minval, follow_map(map_, start))
     return minval
 
 
