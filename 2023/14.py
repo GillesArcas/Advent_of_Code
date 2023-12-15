@@ -126,7 +126,7 @@ def code2(grid):
     offset, period = offset_period(values)
     assert all(values[n] == values[offset + (n - offset) % period] for n in range(offset, 1000))
 
-    return values[offset + (1000000000 +-1 - offset) % period]
+    return values[offset + (1000000000 - 1 - offset) % period]
 
 
 def test(n, code, examples, myinput):
