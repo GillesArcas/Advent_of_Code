@@ -24,18 +24,6 @@ def read_data(filename):
         return [_.strip() for _ in f.readlines()]
 
 
-def valid_coord(i, j, grid):
-    return 0 <= i < len(grid) and 0 <= j < len(grid[0])
-
-
-def neighbours(i, j, grid):
-    neighs = []
-    for i2, j2 in ((i + 1, j), (i - 1, j), (i, j + 1), (i, j - 1)):
-        if valid_coord(i2, j2, grid):
-            neighs.append((i2, j2))
-    return neighs
-
-
 def grid_to_graph_1(grid):
     graph = defaultdict(dict)
 
