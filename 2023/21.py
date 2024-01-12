@@ -2,6 +2,42 @@
 --- Day 21: Step Counter ---
 """
 
+"""
+Explications partie 2:
+
+En traçant les premières valeurs du nombre de points atteints, puis leurs
+accroissements et les accroissements des accrossements, on constate que les
+accroissements des accrossements sont périodiques pour un écart donné entre
+termes.
+
+u connu jusqu'au rang p+q
+vn+1 = un+1 - un ou un+1 = un + vn+1
+wn+q = vn+q - vn ou vn+q = vn + wn+q
+
+w est périodique de période q, wn+q = wn à partir du rang p+q
+
+On en déduit que :
+
+vp+aq+b = vp+b + awp+b
+
+Ensuite, on développe pour trouver le formule dgénérale de un.
+
+up+q+1 = up+q + vp+q+1
+       = up+q + vp+1 + wp+1
+...
+up+q+q = up+q + vp+1 + ... + vp+q + wp+1 ...  + wp+q
+
+up+2q+1 = up+2q + vp+2q+1
+        = (up+q + vp+1 + ... + vp+q + wp+1 ...  + wp+q) + vp+2q+1
+        = (up+q + vp+1 + ... + vp+q + wp+1 ...  + wp+q) + vp+q+1 + wp+2q+1
+        = (up+q + vp+1 + ... + vp+q + wp+1 ...  + wp+q) + vp+q+1 + wp+q+1
+        = (up+q + vp+1 + ... + vp+q + wp+1 ...  + wp+q) + vp+1 + wp+q+1 + wp+q+1
+        = (up+q + vp+1 + ... + vp+q + wp+1 ...  + wp+q)
+                + vp+1 +            + 2wp+1
+
+etc
+"""
+
 
 EXAMPLES1 = (
     ('21-exemple1.txt', 16),
