@@ -136,8 +136,6 @@ def code1(lines):
 
 
 def code2(lines):
-    # 6686 too high
-    # 6685 too high
     return code(lines, mode=2)
 
 
