@@ -1,5 +1,20 @@
 """
 --- Day 25: Snowverload ---
+
+The algorithm tries to disconnect the graph by removing triplets of edges
+chosen in a reduce set.
+Initialize first the two components with `peripheral` nodes, ie nodes with distance
+equal to the maximum distance in the graph (the diameter of the graph). After
+that, neighbours of the nodes already in the components are added while there
+is no overlap. Finally, the relevant set of edges is constructed as the set of
+edges from nodes outside the two components.
+
+This reduces the edges to consider to 108 (out of the 3320 of the full graph)
+and execution time to 4.5 minutes.
+
+The algorithm to find peripheral nodes (nodes farthest from the farthest nodes
+from a random node) has been found in https://www.reddit.com/r/learnpython/comments/jpvsf9/networkx_graph_theory_finding_farthest_two_points/
+without reference or justification.
 """
 
 
@@ -136,7 +151,7 @@ def code1(graph):
     between_edges = set()
     for node in between:
         between_edges.update([tuple(sorted((node, n))) for n in graph[node]])
-    print(len(between_edges))
+    print(len(between_edges), 'out of', sum(len(_) for _ in graph.values()) // 2)
 
     # choose one random node from each core
     node1 = list(core1)[0]
@@ -144,7 +159,7 @@ def code1(graph):
 
     # test combinations of 3 candidate edges
     for index, edges in enumerate(itertools.combinations(between_edges, 3), 1):
-        print(index, edges)
+        # print(index, edges)
         for edge in edges:
             del graph[edge[0]][edge[1]]
             del graph[edge[1]][edge[0]]
