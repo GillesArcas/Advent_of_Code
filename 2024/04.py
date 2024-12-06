@@ -50,7 +50,7 @@ def diag2(mat):
 
 
 def allstrings(mat):
-    # marche pas
+    # marche sur l'exemple pas sur la donnee
     yield from mat
     yield from diag1(mat)
     mat = [''.join(_) for _ in zip(*mat)]
