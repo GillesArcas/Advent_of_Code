@@ -8,7 +8,6 @@ import functools
 from collections import defaultdict
 from frozendict import frozendict
 
-from icecream import ic
 
 EXAMPLES1 = (
     ('21-exemple1.txt', 126384),
@@ -126,7 +125,6 @@ def getkeys(code, numdir, movesnum, movesdir):
     Iteration on moves_for_pad
     """
     listkeys = moves_for_pad(code, movesnum)
-    minlen = float('inf')
     for _ in range(numdir):
         listkeys2 = set()
         for seq in listkeys:
